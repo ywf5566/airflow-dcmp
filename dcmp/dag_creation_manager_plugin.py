@@ -480,6 +480,8 @@ class DagCreationManager(BaseView):
         elif api == "update_dag":
             dag_name = request.args.get("dag_name")
             data = request.get_json()
+            if data is None:
+                data = json.loads(request.data)
             try:
                 data = dag_converter.clean_dag_dict(data, strict=True)
             except Exception as e:
