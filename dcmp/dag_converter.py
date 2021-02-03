@@ -45,15 +45,16 @@ class DAGConverter(object):
                   ("upstreams", get_list, False), ("SSH_conn_id", get_string, False))
 
     DAG_CODE_TEMPLATE = load_dag_template("dag_code")
+    NONE_CRON_DAG_TEMPLATE = load_dag_template("none_cron_dag")
 
     BASH_TASK_CODE_TEMPLATE = r"""{0[0]} = BashOperator(
-    task_id='{0[1]}',bash_command=r'''{0[2]} ''',dag=dag)
+    task_id='{0[1]}',bash_command=r'''{0[2]} ''',trigger_rule='{0[3]}',dag=dag)
     """
     TRIGGER_DAG_TASK_CODE_TEMPLATE = r"""{0[0]} = TriggerDagRunOperator(
-    task_id='{0[1]}',trigger_dag_id='{0[2]}',dag=dag)
+    task_id='{0[1]}',trigger_dag_id='{0[2]}',trigger_rule='{0[3]}',dag=dag)
     """
     SSH_TASK_CODE_TEMPLATE = r"""{0[0]} = SSHOperator(
-    task_id='{0[1]}', ssh_conn_id='{0[2]}', command=r'''{0[3]}''',dag=dag)
+    task_id='{0[1]}', ssh_conn_id='{0[2]}', command=r'''{0[3]}''',trigger_rule='{0[4]}',dag=dag)
     """
     STREAM_CODE_TEMPLATE = """%(upstream_name)s >> %(task_name)s"""
 
@@ -143,34 +144,25 @@ class DAGConverter(object):
 
     def render_confs(self, confs):
         confs = deepcopy(confs)
-        now = datetime.now()
         # 初始化空的dag——code
         dag_codes = []
         # 根据配置创建dag
         for dag_name, conf in confs.items():
+            new_conf = {}
             # ---------necessary----------
             if not conf.get("owner"):
-                conf["owner"] = "airflow"
-            task_names = [task["task_name"] for task in conf["tasks"]]
-
-            cron = conf["cron"]
-            if cron == "None" or cron == "":
-                conf["start_date_code"] = now.strftime(
-                    'datetime.strptime("%Y-%m-%d %H:%M:%S", "%%Y-%%m-%%d %%H:%%M:%%S")')
-                conf["cron_code"] = None
+                new_conf["owner"] = "airflow"
             else:
-                cron_instance = croniter(cron, now)
-                start_date = cron_instance.get_prev(datetime)
-                conf["start_date_code"] = start_date.strftime(
-                    'datetime.strptime("%Y-%m-%d %H:%M:%S", "%%Y-%%m-%%d %%H:%%M:%%S")')
-                # ----------necessary--------------
-                conf["cron_code"] = "'%s'" % cron
-
-            new_conf = {'owner': conf['owner'], 'dag_name': conf['dag_name'], 'cron_code': conf['cron'],
-                        'start_date_code': conf['start_date_code']}
-            # 由dag-code模板和conf进行拼接
-            dag_code = self.DAG_CODE_TEMPLATE % new_conf
-
+                new_conf["owner"] = conf["owner"]
+            new_conf["dag_name"] = conf["dag_name"]
+            new_conf["start_date_code"] = conf['start_date']
+            cron = conf["cron"]
+            if cron == "None":
+                dag_code = self.NONE_CRON_DAG_TEMPLATE % new_conf
+            else:
+                new_conf["cron_code"] = cron
+                dag_code = self.DAG_CODE_TEMPLATE % new_conf
+            logging.exception("new-conf{}".format(new_conf))
             task_codes = []
             stream_codes = []
             for task in conf["tasks"]:
@@ -178,6 +170,11 @@ class DAGConverter(object):
                 if task["task_type"] in ["SSH"]:
                     new_task_list.append(task["SSH_conn_id"])
                 new_task_list.append(task['command'])
+
+                if not task.get("trigger_rule"):
+                    new_task_list.append("all_success")
+                else:
+                    new_task_list.append("none_failed")
 
                 task_template = self.TASK_TYPE_TO_TEMPLATE.get(task['task_type'])
 

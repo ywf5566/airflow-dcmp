@@ -14,4 +14,4 @@ from airflow.operators.dagrun_operator import TriggerDagRunOperator
 from airflow.contrib.operators.ssh_operator import SSHOperator
 TI = TaskInstance
 default_args = {'owner': '%(owner)s', 'start_date': datetime.strptime('%(start_date_code)s', "%%Y-%%m-%%d %%H:%%M:%%S")}
-dag = DAG('%(dag_name)s', default_args=default_args, schedule_interval='%(cron_code)s')
+dag = DAG('%(dag_name)s', default_args=default_args, schedule_interval=None)
