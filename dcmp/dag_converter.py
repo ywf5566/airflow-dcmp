@@ -157,7 +157,7 @@ class DAGConverter(object):
             if cron == "None" or cron == "":
                 conf["start_date_code"] = now.strftime(
                     'datetime.strptime("%Y-%m-%d %H:%M:%S", "%%Y-%%m-%%d %%H:%%M:%%S")')
-                conf["cron_code"] = "None"
+                conf["cron_code"] = None
             else:
                 cron_instance = croniter(cron, now)
                 start_date = cron_instance.get_prev(datetime)
