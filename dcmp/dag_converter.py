@@ -154,10 +154,9 @@ class DAGConverter(object):
             task_names = [task["task_name"] for task in conf["tasks"]]
 
             cron = conf["cron"]
-            if cron == "None":
+            if cron == "None" or cron == "":
                 conf["start_date_code"] = now.strftime(
                     'datetime.strptime("%Y-%m-%d %H:%M:%S", "%%Y-%%m-%%d %%H:%%M:%%S")')
-                conf["end_date_code"] = "None"
                 conf["cron_code"] = "None"
             else:
                 cron_instance = croniter(cron, now)
@@ -166,9 +165,6 @@ class DAGConverter(object):
                     'datetime.strptime("%Y-%m-%d %H:%M:%S", "%%Y-%%m-%%d %%H:%%M:%%S")')
                 # ----------necessary--------------
                 conf["cron_code"] = "'%s'" % cron
-            # ----------necessary-----------
-            if conf["start_date"]:
-                conf["start_date_code"] = 'datetime.strptime("%s", "%%Y-%%m-%%d %%H:%%M:%%S")' % conf["start_date"]
 
             new_conf = {'owner': conf['owner'], 'dag_name': conf['dag_name'], 'cron_code': conf['cron'],
                         'start_date_code': conf['start_date_code']}
