@@ -30,7 +30,7 @@
             <div class="panel-body">
 
                 <div class="form-group">
-                    <label for="start_date" class="col-md-2 control-label long-label">Owner <span class="glyphicon glyphicon-info-sign" aria-hidden="true" title='任务的归属者&#10;默认airflow用户'></span> &nbsp;</label>
+                    <label for="owner" class="col-md-2 control-label long-label">Owner <span class="glyphicon glyphicon-info-sign" aria-hidden="true" title='任务的归属者&#10;默认airflow用户'></span> &nbsp;</label>
                     <div class="col-md-10 form-field">
                         <input class="form-control" id="owner" name="owner" type="text" value="{{ conf.owner }}"  {% if readonly %}readonly="readonly"{% endif %}></div>
                 </div>

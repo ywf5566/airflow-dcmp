@@ -174,7 +174,7 @@ class DAGConverter(object):
                 if not task.get("trigger_rule"):
                     new_task_list.append("all_success")
                 else:
-                    new_task_list.append("none_failed")
+                    new_task_list.append("one_failed")
 
                 task_template = self.TASK_TYPE_TO_TEMPLATE.get(task['task_type'])
 
