@@ -483,6 +483,7 @@ class DagCreationManager(BaseView):
             if data is None:
                 data = json.loads(request.data)
             try:
+                # 返回的是conf
                 data = dag_converter.clean_dag_dict(data, strict=True)
             except Exception as e:
                 logging.exception("api.update_dag")

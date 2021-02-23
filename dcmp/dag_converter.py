@@ -40,7 +40,7 @@ def load_dag_template(template_name):
 
 class DAGConverter(object):
     # 元组
-    DAG_ITEMS = (("dag_name", get_string, True), ("cron", get_string, True), ("start_date", get_string, False))
+    DAG_ITEMS = (("dag_name", get_string, True), ("cron", get_string, True), ("start_date", get_string, False), ("owner", get_string, False))
     TASK_ITEMS = (("task_name", get_string, True), ("task_type", get_string, True), ("command", get_string, False),
                   ("upstreams", get_list, False), ("SSH_conn_id", get_string, False))
 
@@ -91,7 +91,7 @@ class DAGConverter(object):
             task_res[key] = value
         return task_res
 
-    # 把前端dict 转化成json
+    # update--1.1 把前端dict 转化成json
     def dict_to_json(self, dag_dict, strict=False):
         if not dag_dict or not isinstance(dag_dict, dict):
             raise ValueError("dags required")
@@ -162,7 +162,6 @@ class DAGConverter(object):
             else:
                 new_conf["cron_code"] = cron
                 dag_code = self.DAG_CODE_TEMPLATE % new_conf
-            logging.exception("new-conf{}".format(new_conf))
             task_codes = []
             stream_codes = []
             for task in conf["tasks"]:
@@ -225,17 +224,17 @@ class DAGConverter(object):
             shutil.rmtree(tmp_dir, ignore_errors=True)
             raise err
 
-    # 根据配置创建dag
+    # update--1.2 根据配置创建dag
     def create_dagbag_by_conf(self, conf):
 
         _, dag_code = self.render_confs({conf["dag_name"]: conf})[0]
         # 在utils包中
         return create_dagbag_by_dag_code(dag_code)
 
+    # update的第一步
     def clean_dag_dict(self, dag_dict, strict=False):
         conf = self.dict_to_json(dag_dict, strict=strict)
         dagbag = self.create_dagbag_by_conf(conf)
-
         if dagbag.import_errors:
             raise ImportError(dagbag.import_errors.items()[0][1])
         return conf
