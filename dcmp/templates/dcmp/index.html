@@ -81,13 +81,13 @@
             </th>
             <th style="padding-left: 5px;">
                 Recent Tasks
-                <span id="statuses_info" class="glyphicon glyphicon-info-sign" aria-hidden="true" title="Status of tasks from all active DAG runs or, if not currently active, from most recent run."></span>
-                <img id="recent_tasks_loading" width="15" src="{{ url_for("static", filename="loading.gif") }}">
+                <span id="recent_tasks" class="glyphicon glyphicon-info-sign" aria-hidden="true" title="Status of tasks from all active DAG runs or, if not currently active, from most recent run."></span>
+                <img id="recent_tasks_loading" width="15" src="{{ url_for('static', filename='loading.gif') }}">
             </th>
             <th class="column-header">
                 DAG Runs
-                <span id="statuses_info" class="glyphicon glyphicon-info-sign" aria-hidden="true" title="Status of all previous DAG runs."></span>
-                <img id="dag_runs_loading" width="15" src="{{ url_for("static", filename="loading.gif") }}">
+                <span id="dag_runs" class="glyphicon glyphicon-info-sign" aria-hidden="true" title="Status of all previous DAG runs."></span>
+                <img id="dag_runs_loading" width="15" src="{{ url_for('static', filename='loading.gif') }}">
             </th>
             {% if search %}
             <th class="column-header">
@@ -131,7 +131,7 @@
             {% endif %}
         </td>
         <td><a href="graph?dag_name={{ dcmp_dag.conf.dag_name }}&readonly=True" class="dag-name" dagname="{{ dcmp_dag.conf.dag_name }}">{{ dcmp_dag.conf.dag_name }}</a> <img class="loading" style="display: none;" width="15" src="{{ url_for("static", filename="loading.gif") }}"></td>
-        <td>{{ dcmp_dag.conf.category }}</td>
+        <td>{{ dcmp_dag.conf.owner }}</td>
         <td><span class="label label-default">{{ dcmp_dag.conf.cron }}</span></td>
         <td style="padding:0px; width:200px; height:10px;">
             <svg height="10" width="10" id='task-run-{{ dcmp_dag.conf.dag_name }}' style="display: block;"></svg>
