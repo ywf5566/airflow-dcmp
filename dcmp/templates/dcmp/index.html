@@ -124,8 +124,8 @@
         <td>
             {% if dcmp_dag.editing %}
                 <span class="label" style="background-color:lime;" title="{{ dcmp_dag.editing_user_name }}{{ dcmp_dag.editing_start.strftime(' %Y-%m-%d %H:%M') if dcmp_dag.editing_start else '' }}">editing</span>
-            {% elif dcmp_dag.version != dcmp_dag.approved_version %}
-                {% if can_access_approver %}<a href="approve?dag_name={{ dcmp_dag.conf.dag_name }}" style="text-decoration: none;">{% endif %}<span class="label" style="background-color:gold;" title="{{ dcmp_dag.last_editor_user_name }}{{ dcmp_dag.last_edited_at.strftime(' %Y-%m-%d %H:%M') if dcmp_dag.last_edited_at else '' }}">need approve</span>{% if can_access_approver %}</a>{% endif %}
+<!--            {% elif dcmp_dag.version != dcmp_dag.approved_version %}-->
+<!--                {% if can_access_approver %}<a href="approve?dag_name={{ dcmp_dag.conf.dag_name }}" style="text-decoration: none;">{% endif %}<span class="label" style="background-color:gold;" title="{{ dcmp_dag.last_editor_user_name }}{{ dcmp_dag.last_edited_at.strftime(' %Y-%m-%d %H:%M') if dcmp_dag.last_edited_at else '' }}">need approve</span>{% if can_access_approver %}</a>{% endif %}-->
             {% else %}
                 <span class="label" style="background-color:green;" title="{{ dcmp_dag.approver_user_name }}{{ dcmp_dag.last_approved_at.strftime(' %Y-%m-%d %H:%M') if dcmp_dag.last_approved_at else '' }}">published</span>
             {% endif %}
@@ -148,11 +148,11 @@
                       <span class="fa fa-pencil glyphicon glyphicon-search" data-original-title="" title=""></span>
                     </a>
                     {{ search_result["html_line"]|safe }}
-<!--
-                    <a class="link-tooltip" href="raw?dag_name={{ dcmp_dag.conf.dag_name }}&highlight={{ search }}" title="Edit Record">
-                      <span class="fa fa-pencil glyphicon glyphicon-pencil" data-original-title="" title=""></span>
-                    </a>
--->
+
+<!--                    <a class="link-tooltip" href="raw?dag_name={{ dcmp_dag.conf.dag_name }}&highlight={{ search }}" title="Edit Record">-->
+<!--                      <span class="fa fa-pencil glyphicon glyphicon-pencil" data-original-title="" title=""></span>-->
+<!--                    </a>-->
+
                 </div>
             {% endfor %}
         </td>
