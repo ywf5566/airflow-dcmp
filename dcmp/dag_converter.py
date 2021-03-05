@@ -42,7 +42,7 @@ class DAGConverter(object):
     # 元组
     DAG_ITEMS = (("dag_name", get_string, True), ("cron", get_string, True), ("start_date", get_string, False), ("owner", get_string, False))
     TASK_ITEMS = (("task_name", get_string, True), ("task_type", get_string, True), ("command", get_string, False),
-                  ("upstreams", get_list, False), ("SSH_conn_id", get_string, False))
+                  ("upstreams", get_list, False), ("SSH_conn_id", get_string, False), ("trigger_rule", get_string, False))
 
     DAG_CODE_TEMPLATE = load_dag_template("dag_code")
     NONE_CRON_DAG_TEMPLATE = load_dag_template("none_cron_dag")
@@ -173,10 +173,12 @@ class DAGConverter(object):
                 if not task.get("trigger_rule"):
                     new_task_list.append("all_success")
                 else:
-                    new_task_list.append("one_failed")
+                    if task.get("trigger_rule") == 'fail':
+                        new_task_list.append("one_failed")
+                    else:
+                        new_task_list.append("all_success")
 
                 task_template = self.TASK_TYPE_TO_TEMPLATE.get(task['task_type'])
-
                 if task_template:
                     task_codes.append(task_template.format(new_task_list))
                 else:
